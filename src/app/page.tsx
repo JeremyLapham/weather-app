@@ -1,95 +1,81 @@
-import Image from 'next/image'
-import styles from './page.module.css'
+"use client";
+import { useEffect, useState } from "react";
+import { Container, Row, Col, Button } from "react-bootstrap";
+import "./page.module.css";
+import { CityData, WeatherData } from "./Services/WeatherFetch";
+import TodaysWeatherBox from "./Components/todaysWeatherBox";
 
 export default function Home() {
+  const [search, setSearch] = useState("stockton");
+  const [weatherType, setWeatherType] = useState("");
+  const [currentTemp, setCurrentTemp] = useState(0);
+  const [coldestTempToday, setColdestTempToday] = useState(0);
+  const [hotestTempToday, setHotestTempToday] = useState(0);
+  const [icon, setIcon] = useState("");
+  const [state, setState] = useState("");
+  const [city, setCity] = useState("");
+  const [country, setCountry] = useState("");
+
+  // const [options, setOptions] = useState<any>([]);
+  // useEffect(() => {
+  //   const SetData = async () => {
+  //     let options: any = [];
+  //     const data = await CityData(search);
+  //     data.map((option: any) => {
+  //       options.push(option);
+  //     });
+  //     setOptions(options);
+  //   };
+  //   SetData();
+  // }, [search]);
+
+  const setData = (data: any) => {
+    setWeatherType(data.weather[0].main);
+    setCurrentTemp(Math.round(data.main.temp));
+    setColdestTempToday(Math.round(data.main.temp_min));
+    setHotestTempToday(Math.round(data.main.temp_max));
+    setIcon(data.weather[0].icon);
+    setCity(data.name);
+    setCountry(data.sys.country);
+    console.log(data);
+  };
+
+  useEffect(() => {
+    const settingData = async () => {
+      const data = await WeatherData(search);
+      setData(data);
+    };
+    settingData();
+  }, []);
+
+  const handleSearch = () => {
+    WeatherData(search);
+  };
+  // <Row>
+  //       <Col>
+  //         <input
+  //           onChange={(e: any) => setSearch(e.target.value)}
+  //           value={search}
+  //         />
+  //       </Col>
+  //       <Col>
+  //         <Button onClick={() => handleSearch()}>Search</Button>
+  //       </Col>
+  //     </Row>
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
-
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore the Next.js 13 playground.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  )
+    <Container fluid className={`${weatherType}`}>
+      <Row>
+        <Col>
+          <TodaysWeatherBox
+            nowTemp={currentTemp}
+            coldestTemp={coldestTempToday}
+            hotestTemp={hotestTempToday}
+            icon={icon}
+            city={city}
+            country={country}
+          />
+        </Col>
+      </Row>
+    </Container>
+  );
 }
