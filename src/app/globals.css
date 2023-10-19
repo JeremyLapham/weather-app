@@ -1,5 +1,5 @@
-@import './page.module.css';
 @import 'bootstrap/dist/css/bootstrap.min.css';
+@import './page.module.css';
 
 .Clouds {
   background-image: url(./Assets/cloudy.jpg);

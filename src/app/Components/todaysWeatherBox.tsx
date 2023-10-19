@@ -9,6 +9,9 @@ interface TodayBox {
   icon: string;
   city: string;
   country: string;
+  sunset: any;
+  sunrise: any;
+  weatherDes: string;
 }
 
 export default function TodaysWeatherBox({
@@ -17,8 +20,22 @@ export default function TodaysWeatherBox({
   hotestTemp,
   icon,
   city,
-  country
+  country,
+  sunset,
+  sunrise,
+  weatherDes
 }: TodayBox) {
+  const convert = (time: any) => {
+    const date = new Date(time * 1000);
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+
+    const hours12 = hours % 12 || 12;
+
+    return `${hours12.toString().padStart(2)}:${minutes
+      .toString()
+      .padStart(2, "0")}`;
+  };
   return (
     <Container className="todayBox">
       <Row>
@@ -34,12 +51,27 @@ export default function TodaysWeatherBox({
       </Row>
       <Row>
         <Col>
-            <img src={`https://openweathermap.org/img/wn/${icon}@4x.png`} alt='Weather icon'/>
+          <img
+            src={`https://openweathermap.org/img/wn/${icon}@4x.png`}
+            alt="Weather icon"
+          />
         </Col>
       </Row>
       <Row>
         <Col>
-            <h3>{city}, {country}</h3>
+          <h3>
+            {city}, {country}
+          </h3>
+        </Col>
+        <Col>
+          <h3>
+            Sun Rise: {convert(sunrise)}AM, Sun Set {convert(sunset)}PM
+          </h3>
+        </Col>
+        <Col>
+          <h3>
+            {weatherDes}
+          </h3>
         </Col>
       </Row>
     </Container>

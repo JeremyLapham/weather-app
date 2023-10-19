@@ -1,3 +1,18 @@
 .todayBox {
-  background-color:rgba(255, 255, 255, 0.589) ;
+  background-color:rgba(255, 255, 255, 0.589);
+  border-radius: 25px;
 }
+
+.weatherBox {
+  background-color: rgba(255, 255, 255, 0.589);
+  width: 120%;
+  margin: 12px;
+  border-radius: 25px;
+}
+
+/* .fiveDayScroll {
+  overflow: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+} */

@@ -2,8 +2,14 @@
 import { useEffect, useState } from "react";
 import { Container, Row, Col, Button } from "react-bootstrap";
 import "./page.module.css";
-import { CityData, WeatherData } from "./Services/WeatherFetch";
+import {
+  CityData,
+  WeatherData,
+  WeatherDataFiveDay,
+} from "./Services/WeatherFetch";
 import TodaysWeatherBox from "./Components/todaysWeatherBox";
+import FiveDayBoxes from "./Components/FiveDayBoxes";
+import MainFiveDayBox from "./Components/MainFiveDayBox";
 
 export default function Home() {
   const [search, setSearch] = useState("stockton");
@@ -12,9 +18,24 @@ export default function Home() {
   const [coldestTempToday, setColdestTempToday] = useState(0);
   const [hotestTempToday, setHotestTempToday] = useState(0);
   const [icon, setIcon] = useState("");
-  const [state, setState] = useState("");
   const [city, setCity] = useState("");
   const [country, setCountry] = useState("");
+  const [sunrise, setSunrise] = useState("");
+  const [sunset, setSunset] = useState("");
+  const [weatherDes, setWeatherDes] = useState("");
+
+  const [fiveDayOne, setFiveDayAllDays] = useState<any[]>([]);
+
+  useEffect(() => {
+    gettingData(search);
+  }, []);
+
+  async function gettingData(search: any) {
+    const data = await WeatherData(search);
+    const FiveDayForecast = await WeatherDataFiveDay(search);
+    setData(data);
+    FiveDaySetData(FiveDayForecast);
+  }
 
   // const [options, setOptions] = useState<any>([]);
   // useEffect(() => {
@@ -37,33 +58,37 @@ export default function Home() {
     setIcon(data.weather[0].icon);
     setCity(data.name);
     setCountry(data.sys.country);
-    console.log(data);
+    setSunset(data.sys.sunset);
+    setSunrise(data.sys.sunrise);
+    setWeatherDes(data.weather[0].main);
   };
 
-  useEffect(() => {
-    const settingData = async () => {
-      const data = await WeatherData(search);
-      setData(data);
+  const FiveDaySetData = (fiveDay: any) => {
+    const nums: any = [];
+    for (let i = 0; i < 40; i++) {
+      nums.push(fiveDay.list[i]);
     };
-    settingData();
-  }, []);
+    setFiveDayAllDays(nums);
+  };
+
+  const input = (e: any) => {
+    setSearch(e.target.value.toLowerCase());
+  };
 
   const handleSearch = () => {
-    WeatherData(search);
+    gettingData(search);
   };
-  // <Row>
-  //       <Col>
-  //         <input
-  //           onChange={(e: any) => setSearch(e.target.value)}
-  //           value={search}
-  //         />
-  //       </Col>
-  //       <Col>
-  //         <Button onClick={() => handleSearch()}>Search</Button>
-  //       </Col>
-  //     </Row>
+
   return (
     <Container fluid className={`${weatherType}`}>
+      <Row>
+        <Col>
+          <input onChange={(e) => input(e)} value={search} />
+        </Col>
+        <Col>
+          <Button onClick={() => handleSearch()}>Search</Button>
+        </Col>
+      </Row>
       <Row>
         <Col>
           <TodaysWeatherBox
@@ -73,7 +98,15 @@ export default function Home() {
             icon={icon}
             city={city}
             country={country}
+            sunset={sunset}
+            sunrise={sunrise}
+            weatherDes={weatherDes}
           />
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          <MainFiveDayBox fiveDay={fiveDayOne} />
         </Col>
       </Row>
     </Container>
